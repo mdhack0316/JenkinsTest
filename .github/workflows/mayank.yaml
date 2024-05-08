@@ -1,0 +1,71 @@
+name: development
+
+on:
+  push:
+    branches:
+      - 'master'
+
+env:
+  REPO_NAME: mayank
+  ENV: dev
+  APP_NAME: frontend
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.vars.outputs.sha_short }}
+    steps:
+      - name: Checkout Development Branch
+        uses: actions/checkout@v3
+        with:
+          ref: master
+      -
+        name: Get Commit Details
+        id: vars
+        run: echo "::set-output name=sha_short::$(git rev-parse --short HEAD)"
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/${{ env.REPO_NAME }}:${{ env.ENV }}-${{ env.APP_NAME }}-${{ steps.vars.outputs.sha_short }}
+  
+  cd:
+    needs: ci
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout Deployment Repo
+        uses: actions/checkout@v3
+        with:
+          repository:  mdhack0316/testgitopsgithubactions
+          token: ${{ secrets.GH_PAT }}
+          ref: 'main'
+      - 
+        name: Updating Deployment Image
+        run: |
+          export IMAGE_NAME=${{ secrets.DOCKERHUB_USERNAME }}/${{ env.REPO_NAME }}:${{ env.ENV }}-${{ env.APP_NAME }}-${{ needs.ci.outputs.image }}
+          echo $IMAGE_NAME
+          sed -i "s|mdhack/hcl.*$|$IMAGE_NAME|" deployment.yaml
+      -
+        name: Push To Repository
+        run: |
+          git config --global user.email "mayank123modi@gmail.com"
+          git config --global user.name "Runner"
+          git add .
+          git commit -m "${IMAGE_NAME} Tag"
+          git push
+
