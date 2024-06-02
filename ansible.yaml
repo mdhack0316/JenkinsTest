@@ -4,4 +4,4 @@
   tasks: 
   - name: Running Local Test
     shell: | 
-            sudo docker run --rm gesellix/trufflehog  https://github.com/mdhack0316/cnawebapp   >  status.txt 
+            sudo docker run --rm gesellix/trufflehog  https://github.com/mdhack0316/cnawebapp   
