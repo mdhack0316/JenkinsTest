@@ -4,11 +4,4 @@
   tasks: 
   - name: Running Local Test
     shell: | 
-            docker run --rm gesellix/trufflehog  https://github.com/mdhack0316/cnawebapp   >  status.txt
-            if [ `cat status.txt | wc -l`   -gt 0 ]
-            then  
-	          echo  "There is Some Bug Please Fix IT and Try again"
-            exit 1
-            else
-	          echo  "Goood to GO"
-            fi
+            docker run --rm gesellix/trufflehog  https://github.com/mdhack0316/cnawebapp   >  status.txt ; if [ `cat status.txt | wc -l`   -gt 0 ] ; then ;  echo  "There is Some Bug Please Fix IT and Try again" ;  exit 1 ; else ; echo "good to go" ; fi 
