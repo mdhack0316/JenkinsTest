@@ -9,6 +9,12 @@
         return_content: no
         status_code: 200
       register: response
+      ignore_errors: yes
+
+
+    - name: Detailed Info
+      debug:
+        var: response
 
     - name: Check HTTP status code
       debug:
