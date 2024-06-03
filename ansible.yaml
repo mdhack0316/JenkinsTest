@@ -4,7 +4,7 @@
   tasks:
     - name: Perform HTTP GET request
       uri:
-        url: "http://localhost
+        url: "http://localhost"
         method: GET
         return_content: no
         status_code: 200
@@ -12,4 +12,4 @@
 
     - name: Check HTTP status code
       debug:
-        msg: "HTTP Status Code: {{ response.status }}"
+        msg: "HTTP Status Code: {{ response.status }}" , Not Working
