@@ -1,6 +1,15 @@
 ---
-- name: Testing Code
+- name: Test HTTP Status Code 200
   hosts: localhost
-  tasks: 
-  - name: Running Local Test
-    shell: date
+  tasks:
+    - name: Perform HTTP GET request
+      uri:
+        url: "http://localhost
+        method: GET
+        return_content: no
+        status_code: 200
+      register: response
+
+    - name: Check HTTP status code
+      debug:
+        msg: "HTTP Status Code: {{ response.status }}"
